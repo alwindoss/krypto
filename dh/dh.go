@@ -1,7 +1,6 @@
 package dh
 
 import (
-	"fmt"
 	"math/big"
 )
 
@@ -61,7 +60,6 @@ func New(gp Group, privKey *big.Int) DH {
 	dhObj := &dh{}
 	switch gp {
 	case GroupFive:
-		fmt.Printf("Group 5 chosen\n")
 		p, ok := new(big.Int).SetString(gpFiveP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
@@ -71,7 +69,6 @@ func New(gp Group, privKey *big.Int) DH {
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupFourteen:
-		fmt.Printf("Group 14 chosen\n")
 		p, ok := new(big.Int).SetString(gpFourteenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
@@ -81,7 +78,6 @@ func New(gp Group, privKey *big.Int) DH {
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupFifteen:
-		fmt.Printf("Group 15 chosen\n")
 		p, ok := new(big.Int).SetString(gpFifteenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
@@ -91,7 +87,6 @@ func New(gp Group, privKey *big.Int) DH {
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupSixteen:
-		fmt.Printf("Group 16 chosen\n")
 		p, ok := new(big.Int).SetString(gpSixteenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
@@ -101,7 +96,6 @@ func New(gp Group, privKey *big.Int) DH {
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupSeventeen:
-		fmt.Printf("Group 17 chosen\n")
 		p, ok := new(big.Int).SetString(gpSeventeenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
@@ -111,7 +105,6 @@ func New(gp Group, privKey *big.Int) DH {
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupEighteen:
-		fmt.Printf("Group 18 chosen\n")
 		p, ok := new(big.Int).SetString(gpEighteenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
@@ -144,7 +137,6 @@ func (d *dh) GVal() *big.Int {
 
 func (d *dh) Generate() {
 	pub := new(big.Int).Exp(d.G, d.PrivKey, d.P)
-	fmt.Printf("Public Key Generated: %s\n", pub.String())
 	d.PubKey = pub
 
 }
