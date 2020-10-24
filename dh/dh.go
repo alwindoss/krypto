@@ -1,7 +1,7 @@
 package dh
 
 import (
-	"fmt"
+	"errors"
 	"math/big"
 )
 
@@ -17,15 +17,6 @@ const (
 	GroupSeventeen Group = 17
 	GroupEighteen  Group = 18
 )
-
-// DH defines the interface for Diffie-Hellman operations
-type DH interface {
-	PVal() *big.Int
-	GVal() *big.Int
-	Generate()
-	PublicKey() *big.Int
-	SecretKey(*big.Int) *big.Int
-}
 
 /*
 From the RFC 3526: https://datatracker.ietf.org/doc/rfc3526/?include_text=1
@@ -55,77 +46,72 @@ const (
 )
 
 // New creates a new DH
-func New(gp Group, privKey *big.Int) DH {
+func New(gp Group, privKey *big.Int) (*DH, error) {
 	// var p = new(big.Int)
 	// var g = new(big.Int)
-	dhObj := &dh{}
+	dhObj := &DH{}
 	switch gp {
 	case GroupFive:
-		fmt.Printf("Group 5 chosen\n")
 		p, ok := new(big.Int).SetString(gpFiveP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
-			panic("unable to create the P value")
+			return nil, errors.New("unable to create the P value")
 		}
 		dhObj.P = p
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupFourteen:
-		fmt.Printf("Group 14 chosen\n")
 		p, ok := new(big.Int).SetString(gpFourteenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
-			panic("unable to create the P value")
+			return nil, errors.New("unable to create the P value")
 		}
 		dhObj.P = p
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupFifteen:
-		fmt.Printf("Group 15 chosen\n")
 		p, ok := new(big.Int).SetString(gpFifteenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
-			panic("unable to create the P value")
+			return nil, errors.New("unable to create the P value")
 		}
 		dhObj.P = p
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupSixteen:
-		fmt.Printf("Group 16 chosen\n")
 		p, ok := new(big.Int).SetString(gpSixteenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
-			panic("unable to create the P value")
+			return nil, errors.New("unable to create the P value")
 		}
 		dhObj.P = p
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupSeventeen:
-		fmt.Printf("Group 17 chosen\n")
 		p, ok := new(big.Int).SetString(gpSeventeenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
-			panic("unable to create the P value")
+			return nil, errors.New("unable to create the P value")
 		}
 		dhObj.P = p
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 	case GroupEighteen:
-		fmt.Printf("Group 18 chosen\n")
 		p, ok := new(big.Int).SetString(gpEighteenP, 16)
 		g := new(big.Int).SetInt64(2)
 		if !ok {
-			panic("unable to create the P value")
+			return nil, errors.New("unable to create the P value")
 		}
 		dhObj.P = p
 		dhObj.G = g
 		dhObj.PrivKey = privKey
 
 	}
-	return dhObj
+	return dhObj, nil
 }
 
-type dh struct {
+// DH is the datastructure the stores all the accessible information in Diffie-Hellman
+type DH struct {
 	P       *big.Int
 	G       *big.Int
 	PrivKey *big.Int
@@ -133,28 +119,32 @@ type dh struct {
 	SecKey  *big.Int
 }
 
-func (d *dh) PVal() *big.Int {
+// PVal retries the P value after the initial set up. Call this method only after New()
+func (d *DH) PVal() *big.Int {
 	return d.P
 }
 
-func (d *dh) GVal() *big.Int {
+// GVal retries the P value after the initial set up. Call this method only after New()
+func (d *DH) GVal() *big.Int {
 	return d.G
 
 }
 
-func (d *dh) Generate() {
+// Generate generates the public key that can be shared across the network
+func (d *DH) Generate() error {
 	pub := new(big.Int).Exp(d.G, d.PrivKey, d.P)
-	fmt.Printf("Public Key Generated: %s\n", pub.String())
 	d.PubKey = pub
-
+	return nil
 }
 
-func (d *dh) PublicKey() *big.Int {
+// PublicKey retrieves the public key that was generated using Generate() method
+func (d *DH) PublicKey() *big.Int {
 	return d.PubKey
 }
 
-func (d *dh) SecretKey(pubKey *big.Int) *big.Int {
+// SecretKey generates the secret given the public key
+func (d *DH) SecretKey(pubKey *big.Int) (*big.Int, error) {
 	secKey := new(big.Int).Exp(pubKey, d.PrivKey, d.P)
 	d.SecKey = secKey
-	return secKey
+	return secKey, nil
 }
