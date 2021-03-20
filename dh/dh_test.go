@@ -1,4 +1,4 @@
-package dh
+package dh // import "imkernel.dev/krypto/dh"
 
 import (
 	"math/big"

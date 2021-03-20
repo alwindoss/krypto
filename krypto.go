@@ -1,1 +1,1 @@
-package krypto
+package krypto // import "imkernel.dev/krypto"

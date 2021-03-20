@@ -1,3 +1,3 @@
-module github.com/alwindoss/krypto
+module imkernel.dev/krypto
 
-go 1.15
+go 1.16
